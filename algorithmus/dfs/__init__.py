@@ -16,6 +16,7 @@ class DeepFirstSearch:
         return True
 
 
+
     def start_solve(self):
         toggler = LightToggler(self.size_row, self.size_column)
         initial_field = [0] * (self.size_row * self.size_column)
