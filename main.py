@@ -1,42 +1,107 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QPushButton
+from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtCore import QTimer
+import time
+
 from algorithmus.dfs import DeepFirstSearch
 from toggle import LightToggler
 
 
-def print_filed(row_size, field):
-    for i in range(len(field)):
-        print(field[i], end="")
-        if (i + 1) % row_size == 0:
-            print()
-    print('-------------\n')
+class MainWindow(QMainWindow):
+    def __init__(self, toggle_combination, size_row, size_column, initial_field):
+        super().__init__()
+        self.toggle_combination = toggle_combination
+        self.size_row = size_row
+        self.size_column = size_column
+        self.initial_field = initial_field.copy()
+        self.field = initial_field.copy()
+        self.toggler = LightToggler(size_row, size_column)
+        self.initUI()
+
+    def initUI(self):
+        self.centralWidget = QWidget()
+        self.setCentralWidget(self.centralWidget)
+        self.gridLayout = QGridLayout(self.centralWidget)
+
+        self.labels = []
+        for i in range(self.size_row * self.size_column):
+            label = QLabel(self.centralWidget)
+            color = "yellow" if self.initial_field[i] == 1 else "black"
+            label.setStyleSheet(f"background-color: {color}; border: 1px solid black;")
+            self.gridLayout.addWidget(label, i // self.size_column, i % self.size_column)
+            self.labels.append(label)
+
+        self.startButton = QPushButton('Start Visualization', self.centralWidget)
+        self.startButton.clicked.connect(self.startVisualization)
+        self.gridLayout.addWidget(self.startButton, self.size_row, 0, 1, self.size_column)
+
+        self.setWindowTitle('Light Toggle Visualization')
+        self.show()
+
+    def startVisualization(self):
+        self.field = self.initial_field.copy()  # Reset to initial field
+        self.updateLabels()  # Update labels to reflect the reset field
+        self.animateToggles()  # Start the animation
+
+    def updateLabels(self):
+        for i, label in enumerate(self.labels):
+            color = "yellow" if self.field[i] == 1 else "black"
+            label.setStyleSheet(f"background-color: {color}; border: 1px solid black;")
+
+    def animateToggles(self):
+        delay = 0
+        for combination in self.toggle_combination:
+            for cell_index in range(len(combination)):
+                if combination[cell_index] == 1:
+                    QTimer.singleShot(delay, lambda cell_index=cell_index: self.applyToggle(cell_index))
+                    delay += 500
+
+    def applyToggle(self, cell_index):
+        self.field = self.toggler.on_toggle(cell_index, self.field)
+        for i in range(len(self.field)):
+            color = "yellow" if self.field[i] == 1 else "black"
+            self.labels[i].setStyleSheet(f"background-color: {color}; border: 1px solid black;")
+
+def runDFS(size_row, size_column ,field):
+    try:
+        dfs = DeepFirstSearch(size_row, size_column, field)
+        _, toggle_combination, queue_solution = dfs.start_solve()
+        return toggle_combination, queue_solution
+    except Exception as e:
+        print(f"An error occurred while running DFS: {e}")
+        return []
 
 
-
-
-
-def start(name):
-
-
-    row_size = 3
-    toggler = LightToggler(row_size, row_size)
+def main():
+    size_row = 6
+    size_column = 6
+    # field = [
+    #     1, 0, 0, 0, 1, 1,
+    #     0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0
+    # ]
 
     field = [
-        1, 0, 0,
-        1, 1, 0,
-        0, 0, 1
+        0, 1, 1, 1, 1, 0,
+        1, 0, 1, 1, 0, 1,
+        1, 1, 0, 0, 1, 1,
+        1, 1, 0, 0, 1, 1,
+        1, 0, 1, 1, 0, 1,
+        0, 1, 1, 1, 1, 0
     ]
 
-    dfs = DeepFirstSearch(row_size,row_size,field)
-    dfs.start_solve()
 
-    # toggled_field = toggler.on_toggle(4, field)
-    # print_filed(row_size, toggled_field)
+    toggle_combination, queue_solution = runDFS(size_row, size_column, field)
+    print(toggle_combination)
 
-    # for i in range(row_size ** 2):
-    #     field = [0] * row_size ** 2
-    #     toggled_field = toggler.on_toggle(i, field)
-    #
-    #     print_filed(row_size, toggled_field)
+    app = QApplication(sys.argv)
+    mainWindow = MainWindow(toggle_combination, size_row, size_column, field)
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-    start('DFS')
+    main()
