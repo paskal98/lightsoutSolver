@@ -74,8 +74,8 @@ def runDFS(size_row, size_column ,field):
 
 
 def main():
-    size_row = 6
-    size_column = 6
+    size_row = 3
+    size_column = 3
     # field = [
     #     1, 0, 0, 0, 1, 1,
     #     0, 0, 0, 0, 0, 0,
@@ -86,12 +86,9 @@ def main():
     # ]
 
     field = [
-        0, 1, 1, 1, 1, 0,
-        1, 0, 1, 1, 0, 1,
-        1, 1, 0, 0, 1, 1,
-        1, 1, 0, 0, 1, 1,
-        1, 0, 1, 1, 0, 1,
-        0, 1, 1, 1, 1, 0
+        0, 1, 1,
+        1, 0, 1,
+        1, 1, 0
     ]
 
 
