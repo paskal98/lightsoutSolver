@@ -3,14 +3,11 @@ import time
 from toggle import LightToggler
 
 
-def tree_solution_data(iterator, deep, field,toggle_cells):
+def filed_data(field, iteration):
     return {
-        "iterator": iterator,
-        "deep": deep,
-        "field": field.copy(),
-        "toggle_cells":toggle_cells.copy()
+        'filed': field,
+        'iteration': iteration + 1
     }
-
 
 class DeepFirstSearch:
     step_by_step_solution = []
@@ -28,147 +25,104 @@ class DeepFirstSearch:
         return True
 
 
-    def start_solve(self):
+    def solve(self):
         toggler = LightToggler(self.size_row, self.size_column)
 
+        #  stack of stacks
+        main_stack = {
+            'stack': [({'filed': [0] * self.cells_count, 'iteration': 0}, set())],
+            'combos': []
+        }
+
+        escape_loop = False
         toggle_combination = []
-        queue_solution = [
-            ([0] * self.cells_count)
-        ]
-        combinations = []
 
         # Start measuring time
         start_time = time.time()
 
-        for number in range(1, 2 ** self.cells_count):
-            # Combination step-by-step generator
-            combination = [0] * self.cells_count
-            for i in range(self.cells_count):
-                if number & (1 << i):
-                    combination[i] = 1
-            combinations.append(combination)
+        numbers =0
 
-            # Check if combination solve problem
-            init_field = ([0] * self.cells_count)
-            for cell_index in range(self.cells_count):
-                if combinations[-1][cell_index] == 1:
-                    init_field = toggler.on_toggle(cell_index, init_field.copy())
-                    queue_solution.append(init_field)
+        # ended by reach the all nodes of tree
+        while main_stack['stack']:
 
-            # Save combination to solve
-            if self.is_solved(init_field):
-                toggle_combination.append(combinations[-1])
-                print("solved")
+
+            # prev step
+            visited = main_stack['stack'][-1][1]
+
+            # get combo for iteration onto
+            combo = main_stack['stack'].pop()[0]
+
+            #  current filed toggled position
+            state = combo['filed']
+
+            # used to creation combination in node order
+            iterator_indx = combo['iteration']
+
+            # while dont reach max of lenght of field matrix
+            if iterator_indx < self.cells_count:
+
+                #  check if can be iterated and go to next leaf
+                if tuple(state) not in visited:
+
+                    visited.add(tuple(state))
+
+                    main_stack['combos'].append(state.copy())
+
+                    #  main of creation combos in tree like set
+                    for i in range(self.cells_count - 1, iterator_indx - 1, -1):
+                        new_states = state.copy()
+                        new_states[i] = 1
+
+                        main_stack['stack'].append(
+                            (
+                                filed_data(new_states, i),
+                                visited.copy()
+                            )
+                        )
+
+                        # Check if combination solve problem
+                        init_field = ([0] * self.cells_count)
+                        for cell_index in range(self.cells_count):
+                            if new_states[cell_index] == 1:
+                                init_field = toggler.on_toggle(cell_index, init_field.copy())
+
+                        # Save combination to solve
+                        if self.is_solved(init_field):
+                            toggle_combination.append(new_states)
+                            print("solved")
+                            escape_loop = True
+                            break
+
+                        # numbers = numbers + 1
+                        # if numbers % 250000 == 0:
+                        #     print(f"{numbers} {main_stack['combos'][-1]}")
+
+            # go through next branch
+            elif tuple(state) not in visited:
+                main_stack['combos'].append(state)
+
+                # Check if combination solve problem
+                init_field = ([0] * self.cells_count)
+                for cell_index in range(self.cells_count):
+                    if new_states[cell_index] == 1:
+                        init_field = toggler.on_toggle(cell_index, init_field.copy())
+
+                # Save combination to solve
+                if self.is_solved(init_field):
+                    toggle_combination.append(new_states)
+                    print("solved")
+                    break
+                # numbers = numbers + 1
+                # if numbers % 250000 == 0:
+                #     print(f"{numbers} {main_stack['combos'][-1]}")
+
+            if escape_loop:
                 break
+
 
         # End measuring time
         end_time = time.time()
-
         execution_time = end_time - start_time
         print(f"Execution Time: {execution_time} seconds")
-        return execution_time, toggle_combination, queue_solution
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # def start_solve(self):
-    #     toggler = LightToggler(self.size_row, self.size_column)
-    #     initial_field = [0] * (self.size_row * self.size_column)
-    #
-    #     deep_step = 0
-    #     index_cell_toggle = 0
-    #     queue = []
-    #     toggled_cells = []
-    #
-    #     state = {
-    #         "deep": -1,
-    #         "field": initial_field.copy(),
-    #         "toggle": -1
-    #     }
-    #
-    #     queue.append(state)
-    #     self.step_by_step_solution.append(state)
-    #
-    #     hard_index = 0
-    #
-    #     toggled_field = initial_field.copy()
-    #     while True:
-    #
-    #
-    #         # Set deep and reset toggle index of cell that can be toggled once
-    #         if index_cell_toggle == ((self.size_row * self.size_column) - 1):
-    #             toggled_field = toggler.on_toggle(hard_index, queue[-1]['field'].copy())
-    #             toggled_cells.append(hard_index)
-    #
-    #             # Create State of field for stat
-    #             state = {
-    #                 "deep": deep_step,
-    #                 "field": toggled_field.copy(),
-    #                 "toggle": hard_index
-    #             }
-    #
-    #             # Add to solver queue
-    #             queue.append(state)
-    #             self.step_by_step_solution.append(state)
-    #             hard_index = hard_index + 1
-    #
-    #             if hard_index == ((self.size_row * self.size_column) - 1):
-    #                 hard_index = 0
-    #
-    #             index_cell_toggle = 0
-    #             deep_step = deep_step + 1
-    #
-    #         # Check if cell hasn't been toggled yet
-    #         is_toggle_permit = True
-    #         for i in toggled_cells:
-    #             if i == index_cell_toggle:
-    #                 is_toggle_permit = False
-    #                 break
-    #
-    #         if is_toggle_permit:
-    #             # toggle cell in field
-    #             toggled_field = toggler.on_toggle(index_cell_toggle, queue[-1]['field'].copy())
-    #             toggled_cells.append(index_cell_toggle)
-    #
-    #             # Create State of field for stat
-    #             state = {
-    #                 "deep": deep_step,
-    #                 "field": toggled_field.copy(),
-    #                 "toggle": index_cell_toggle
-    #             }
-    #
-    #             # Add to solver queue
-    #             queue.append(state)
-    #             self.step_by_step_solution.append(state)
-    #
-    #             # Check if solved
-    #             if self.is_solved(toggled_field) == False:
-    #                 queue.pop(-1)
-    #                 toggled_cells.pop(-1)
-    #             else:
-    #                 print("Solved")
-    #                 print(queue)
-    #                 return queue
-    #
-    #         index_cell_toggle = index_cell_toggle + 1
+        return execution_time, toggle_combination, main_stack['combos']

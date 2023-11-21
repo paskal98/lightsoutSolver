@@ -44,14 +44,15 @@ def generate_combos(cells_count):
         combinations.append(combination)
         if len(combinations) % 250000==0 and cells_count > 16:
             print(f"combos now: {len(combinations)}")
+        print(combination)
     return combinations
 
 
 
 
 fields = []
-size_row = 5
-size_column = 5
+size_row = 3
+size_column = 2
 
 toggler = LightToggler(size_row, size_column)
 
@@ -66,15 +67,20 @@ print(f"Execution Time of creation combinatios: {execution_time} seconds")
 for i in combos:
     fields.append(get_toggled_filed(i,size_row*size_column))
 
-print(f"Lenght before remove dup {len(fields)}")
+# print(f"Lenght before remove dup {len(fields)}")
+#
+# start_time = time.time()
+# fields = remove_duplicates(fields.copy())
+# end_time = time.time()
+# print(f"Execution Time of removing duplications: {execution_time} seconds")
+#
+# print(f"Lenght after remove dup {len(fields)}")
 
-start_time = time.time()
-fields = remove_duplicates(fields.copy())
-end_time = time.time()
-print(f"Execution Time of removing duplications: {execution_time} seconds")
+# for f in fields:
+#     print_filed(f,size_row)
+#     print()
 
-print(f"Lenght after remove dup {len(fields)}")
 
-for f in fields:
-    print_filed(f,size_row)
-    print()
+
+
+

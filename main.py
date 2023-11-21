@@ -4,6 +4,7 @@ from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtCore import QTimer
 import time
 
+from algorithmus.bfs import BreathFirstSearch
 from algorithmus.dfs import DeepFirstSearch
 from toggle import LightToggler
 
@@ -63,10 +64,19 @@ class MainWindow(QMainWindow):
             color = "yellow" if self.field[i] == 1 else "black"
             self.labels[i].setStyleSheet(f"background-color: {color}; border: 1px solid black;")
 
+def runBFS(size_row, size_column ,field):
+    try:
+        bfs = BreathFirstSearch(size_row, size_column, field)
+        _, toggle_combination, queue_solution = bfs.solve()
+        return toggle_combination, queue_solution
+    except Exception as e:
+        print(f"An error occurred while running BFS: {e}")
+        return []
+
 def runDFS(size_row, size_column ,field):
     try:
         dfs = DeepFirstSearch(size_row, size_column, field)
-        _, toggle_combination, queue_solution = dfs.start_solve()
+        _, toggle_combination, queue_solution = dfs.solve()
         return toggle_combination, queue_solution
     except Exception as e:
         print(f"An error occurred while running DFS: {e}")
@@ -74,26 +84,43 @@ def runDFS(size_row, size_column ,field):
 
 
 def main():
-    size_row = 3
-    size_column = 3
+    size_row = 5
+    size_column = 5
+
+    # 11 000 000 combination dfs
+    # 7 000 000 combination bfs
     # field = [
-    #     1, 0, 0, 0, 1, 1,
-    #     0, 0, 0, 0, 0, 0,
-    #     0, 0, 0, 0, 0, 0,
-    #     0, 0, 0, 0, 0, 0,
-    #     0, 0, 0, 0, 0, 0,
-    #     0, 0, 0, 0, 0, 0
+    #     1, 1, 1, 1, 1,
+    #     1, 1, 1, 1, 0,
+    #     1, 0, 1, 0, 0,
+    #     0, 1, 1, 0, 1,
+    #     0, 0, 0, 0, 1
     # ]
 
     field = [
-        0, 1, 1,
-        1, 0, 1,
-        1, 1, 0
+        1, 1, 0, 1, 1,
+        1, 0, 1, 0, 1,
+        0, 1, 1, 1, 0,
+        1, 0, 1, 0, 1,
+        1, 1, 0, 1, 1
     ]
 
 
-    toggle_combination, queue_solution = runDFS(size_row, size_column, field)
+
+    # field = [
+    #     0, 1, 1,
+    #     1, 0, 1,
+    #     1, 1, 0
+    # ]
+
+    print("BFS")
+    toggle_combination, queue_solution = runBFS(size_row, size_column, field)
     print(toggle_combination)
+    print("\n==============\n")
+
+    print("DFS")
+    toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
+    print(toggle_combination2)
 
     app = QApplication(sys.argv)
     mainWindow = MainWindow(toggle_combination, size_row, size_column, field)
