@@ -1,6 +1,6 @@
 import time
 
-from toggle import LightToggler
+from main.utils.toggle import LightToggler
 
 
 def tree_solution_data(iterator, deep, field,toggle_cells):

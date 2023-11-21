@@ -2,7 +2,7 @@
 
 import unittest
 
-from toggle import LightToggler
+from main.utils import LightToggler
 
 
 class TestOnToggle(unittest.TestCase):

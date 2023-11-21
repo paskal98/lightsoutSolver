@@ -1,12 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QPushButton
-from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtCore import QTimer
-import time
 
-from algorithmus.bfs import BreathFirstSearch
-from algorithmus.dfs import DeepFirstSearch
-from toggle import LightToggler
+from main.algorithmus.bfs import BreathFirstSearch
+from main.algorithmus.dfs import DeepFirstSearch
+from main.utils.toggle import LightToggler
 
 
 class MainWindow(QMainWindow):
@@ -113,17 +111,17 @@ def main():
     #     1, 1, 0
     # ]
 
-    print("BFS")
-    toggle_combination, queue_solution = runBFS(size_row, size_column, field)
-    print(toggle_combination)
-    print("\n==============\n")
+    # print("BFS")
+    # toggle_combination, queue_solution = runBFS(size_row, size_column, field)
+    # print(toggle_combination)
+    # print("\n==============\n")
 
     print("DFS")
     toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
     print(toggle_combination2)
 
     app = QApplication(sys.argv)
-    mainWindow = MainWindow(toggle_combination, size_row, size_column, field)
+    mainWindow = MainWindow(toggle_combination2, size_row, size_column, field)
     sys.exit(app.exec_())
 
 
