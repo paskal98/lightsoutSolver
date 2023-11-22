@@ -1,1 +1,8 @@
-./idea
+/.idea
+/main/__pycache__/
+/main/algorithmus/__pycache__/
+/main/algorithmus/bfs/__pycache__/
+/main/algorithmus/dfs/__pycache__/
+/main/algorithmus/heuristic/__pycache__/
+/main/utils/__pycache__/
+/test/__pycache__/
