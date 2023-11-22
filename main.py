@@ -96,13 +96,6 @@ def main():
     #     0, 0, 0, 0, 1
     # ]
 
-    field = [
-        1, 1, 0, 1, 1,
-        1, 0, 1, 0, 1,
-        0, 1, 1, 1, 0,
-        1, 0, 1, 0, 1,
-        1, 1, 0, 1, 1
-    ]
 
     # init_field= [
     #     1, 1, 0, 1, 1,
@@ -134,24 +127,45 @@ def main():
     # size_row = 7
     # size_column = 7
 
+    # init_field = [
+    #     1, 0, 1,
+    #     1, 0, 1
+    # ]
+    # size_row = 3
+    # size_column = 2
+
+    init_field = [
+        1, 1, 1,
+        1, 0, 0,
+        1, 0, 0
+    ]
+    size_row = 3
+    size_column = 3
 
     # print("BFS")
     # toggle_combination, queue_solution = runBFS(size_row, size_column, field)
     # print(toggle_combination)
     # print("\n==============\n")
 
-    print("DFS")
-    toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
-    print(toggle_combination2)
+    # print("DFS")
+    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
+    # print(toggle_combination2)
 
-    solution_combination = get_heuristic_solution(field, size_row, size_column)
+    solution_combination = get_heuristic_solution(init_field, size_row, size_column)
     print(solution_combination)
 
+    toggler = LightToggler(size_row, size_column)
+
+    for i in range(len(solution_combination)):
+        if solution_combination[i] == 1:
+            init_field = toggler.on_toggle(i, init_field.copy())
+
+    print(init_field)
 
 
-    app = QApplication(sys.argv)
-    mainWindow = MainWindow(toggle_combination2, size_row, size_column, field)
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # mainWindow = MainWindow(toggle_combination2, size_row, size_column, field)
+    # sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

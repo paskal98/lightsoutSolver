@@ -2,7 +2,7 @@
 
 import unittest
 
-from main.utils import LightToggler
+from main.utils.toggle import LightToggler
 
 
 class TestOnToggle(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestOnToggle(unittest.TestCase):
             1, 0, 0
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(0, initial_field)
         self.assertEqual(result, expected)
 
@@ -29,7 +29,7 @@ class TestOnToggle(unittest.TestCase):
             0, 0, 1
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(2, initial_field)
         self.assertEqual(result, expected)
 
@@ -42,7 +42,7 @@ class TestOnToggle(unittest.TestCase):
             0, 1, 1
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(5, initial_field)
         self.assertEqual(result, expected)
 
@@ -55,7 +55,7 @@ class TestOnToggle(unittest.TestCase):
             1, 1, 0
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(3, initial_field)
         self.assertEqual(result, expected)
 
@@ -68,7 +68,7 @@ class TestOnToggle(unittest.TestCase):
             0, 1, 0
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(1, initial_field)
         self.assertEqual(result, expected)
 
@@ -81,7 +81,7 @@ class TestOnToggle(unittest.TestCase):
             1, 1, 1
         ]
 
-        toggler = LightToggler(size_row)
+        toggler = LightToggler(size_row,2)
         result = toggler.on_toggle(4, initial_field)
         self.assertEqual(result, expected)
 
