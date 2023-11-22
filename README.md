@@ -1,4 +1,5 @@
 # lightsoutSolver
-Solver that use thre algorithmus to solve: BFS, DFS, Greedy Search, A*
+Solver that use three algorithms to solve: BFS, DFS, Greedy Search, A*
 
-Solver for puzzle game LightsOut
+
+
