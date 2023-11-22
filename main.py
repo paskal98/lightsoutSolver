@@ -128,19 +128,33 @@ def main():
     # size_column = 7
 
     # init_field = [
-    #     1, 0, 1,
-    #     1, 0, 1
+    #     1, 1, 0, 1, 1, 0, 0, 0,
+    #     1, 0, 1, 0, 1, 0, 0, 0,
+    #     0, 1, 1, 1, 0, 0, 0, 0,
+    #     1, 0, 1, 0, 1, 0, 0, 0,
+    #     1, 1, 0, 1, 1, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0
+    #
     # ]
-    # size_row = 3
-    # size_column = 2
+    # size_row = 8
+    # size_column = 8
 
     init_field = [
-        1, 1, 1,
-        1, 0, 0,
-        1, 0, 0
+        1, 0, 1,
+        0, 0, 0
     ]
-    size_row = 3
+    size_row = 2
     size_column = 3
+
+    # init_field = [
+    #     1, 1, 1,
+    #     1, 0, 0,
+    #     1, 0, 0
+    # ]
+    # size_row = 3
+    # size_column = 3
 
     # print("BFS")
     # toggle_combination, queue_solution = runBFS(size_row, size_column, field)
@@ -148,24 +162,30 @@ def main():
     # print("\n==============\n")
 
     # print("DFS")
-    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
+    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
+    # print()
     # print(toggle_combination2)
+
 
     solution_combination = get_heuristic_solution(init_field, size_row, size_column)
     print(solution_combination)
 
-    toggler = LightToggler(size_row, size_column)
+    # toggler = LightToggler(size_row, size_column)
+    #
+    # field = init_field.copy()
+    #
+    # toggle_combination3 = []
+    # for i in range(len(solution_combination)):
+    #     if solution_combination[i] == 1:
+    #         field = toggler.on_toggle(i, field.copy())
+    #         toggle_combination3.append(field.copy())
+    #
+    # print(toggle_combination3)
 
-    for i in range(len(solution_combination)):
-        if solution_combination[i] == 1:
-            init_field = toggler.on_toggle(i, init_field.copy())
 
-    print(init_field)
-
-
-    # app = QApplication(sys.argv)
-    # mainWindow = MainWindow(toggle_combination2, size_row, size_column, field)
-    # sys.exit(app.exec_())
+    app = QApplication(sys.argv)
+    mainWindow = MainWindow([solution_combination], size_row, size_column, init_field)
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

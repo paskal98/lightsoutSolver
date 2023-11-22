@@ -7,30 +7,31 @@ class LightToggler:
     def xor(self, cell):
         return cell ^ 1
 
-    def row_range(self, cell_index):
+    def is_valid_index(self, cell_index):
         min_range = cell_index
         while (min_range % self.size_row != 0):
             min_range -= 1
 
-        max_range = cell_index
-        while (max_range % self.size_row != 0):
-            max_range += 1
+    def get_indxs(self, cell_index):
+        indxs = []
 
-        if max_range == min_range:
-            min_range = cell_index
-            max_range = cell_index + self.size_row
+        if cell_index - self.size_column >= 0:
+            indxs.append(cell_index - self.size_column)
 
-        return min_range, max_range
+        if cell_index + self.size_column < self.size_row * self.size_column:
+            indxs.append(cell_index + self.size_column)
+
+        if cell_index % self.size_column != 0:
+            indxs.append(cell_index - 1)
+
+        if (cell_index + 1) % self.size_column != 0:
+            indxs.append(cell_index + 1)
+        return indxs
 
     def on_toggle(self, cell_index, field):
-        min_range, max_range = self.row_range(cell_index)
 
-        for i in range(self.size_column * self.size_row):
-            if (i + self.size_row) == cell_index or (i - self.size_row) == cell_index:
-                field[i] = self.xor(field[i])
-            elif ((cell_index - 1 == i and i >= min_range) or
-                  (cell_index + 1 == i and i < max_range) or
-                  i == cell_index):
-                field[i] = self.xor(field[i])
+        field[cell_index] = self.xor(field[cell_index])
 
+        for fit_indx in self.get_indxs(cell_index):
+            field[fit_indx] = self.xor(field[fit_indx])
         return field

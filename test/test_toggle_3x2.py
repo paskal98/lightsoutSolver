@@ -8,7 +8,8 @@ from main.utils.toggle import LightToggler
 class TestOnToggle(unittest.TestCase):
 
     def test_left_top_edge(self):
-        size_row = 3
+        size_row = 2
+        size_column = 3
         initial_field = [0] * 6
 
         expected = [
@@ -16,7 +17,7 @@ class TestOnToggle(unittest.TestCase):
             1, 0, 0
         ]
 
-        toggler = LightToggler(size_row,2)
+        toggler = LightToggler(size_row, size_column)
         result = toggler.on_toggle(0, initial_field)
         self.assertEqual(result, expected)
 
