@@ -1,54 +1,76 @@
 import numpy as np
 
-def gauss_jordan_binary(matrix):
+def gauss_jordan_eliminator(matrix):
     """
-    Performs Gauss-Jordan elimination on a binary matrix (0s and 1s).
-    The function assumes the matrix is valid (contains only 0s and 1s) and is square.
+        @Link for pseudocode of Gauss-Jordan elimination on a binary matrix that was use as skeleton
+        https://www.cs.umd.edu/~gasarch/TOPICS/factoring/fastgauss.pdf
     """
-    n = len(matrix)
+    size = matrix.shape[0]
 
-    for i in range(n):
-        # Make the diagonal element 1 if it's not already.
-        if matrix[i][i] == 0:
-            for j in range(i+1, n):
-                if matrix[j][i] == 1:
-                    # Swap rows
-                    matrix[i], matrix[j] = matrix[j], matrix[i]
-                    break
+    for j in range(size):
+        pivot_row = None
 
-        # Make all elements below the diagonal in current column 0
-        for j in range(i+1, n):
+
+        for i in range(j, size):
+            if matrix[i][j] == 1:
+                pivot_row = i
+                break
+
+        if pivot_row is not None:
+
+            if pivot_row != j:
+                matrix[[j, pivot_row]] = matrix[[pivot_row, j]]
+
+            for i in range(j + 1, size):
+                if matrix[i][j] == 1:
+                    matrix[i] = np.bitwise_xor(matrix[i], matrix[j])
+
+    for i in range(size - 1, -1, -1):
+
+        for j in range(i - 1, -1, -1):
             if matrix[j][i] == 1:
-                # Perform row operation
-                matrix[j] = (matrix[j] + matrix[i]) % 2
-
-    # Back substitution to make the upper triangle 0
-    for i in range(n-1, -1, -1):
-        for j in range(i-1, -1, -1):
-            if matrix[j][i] == 1:
-                matrix[j] = (matrix[j] + matrix[i]) % 2
+                matrix[j] = np.bitwise_xor(matrix[j], matrix[i])
 
     return matrix
 
-A = np.array([
-    [1,1,0,1,0,0,0,0,0],
-    [1,1,1,0,1,0,0,0,0],
-    [0,1,1,0,0,1,0,0,0],
-    [1,0,0,1,1,0,1,0,0],
-    [0,1,0,1,1,1,0,1,0],
-    [0,0,1,0,1,1,0,0,1],
-    [0,0,0,1,0,0,1,1,0],
-    [0,0,0,0,1,0,1,1,1],
-    [0,0,0,0,0,1,0,1,1]
-], dtype=int)
+def toggle_matrix_creation(row_size, column_size):
 
-b = np.array([1,1,0,1,0,0,0,1,0], dtype=int)
+    size = row_size * column_size
+    toggle_matrix = np.zeros((size, size), dtype=int)
 
-# Augmenting the matrix A with b
-augmented_matrix = np.column_stack((A, b))
+    for index in range(size):
+        res = divmod(index, column_size)
 
-# Performing Gauss-Jordan elimination on the augmented matrix
-result_augmented_matrix = gauss_jordan_binary(augmented_matrix)
+        row = res[0]
+        col = res[1]
 
+        toggle_matrix[index][index] = 1
 
-print(result_augmented_matrix)
+        if row > 0:
+            toggle_matrix[index][index - column_size] = 1
+
+        if row < row_size - 1:
+            toggle_matrix[index][index + column_size] = 1
+
+        if col > 0:
+            toggle_matrix[index][index - 1] = 1
+
+        if col < column_size - 1:
+            toggle_matrix[index][index + 1] = 1
+
+    return toggle_matrix
+
+def get_heuristic_solution(field,row_size, column_size):
+    prepared_field = np.array(field, dtype=int)
+
+    toggle_matrix = toggle_matrix_creation(row_size, column_size)
+
+    matrix = np.column_stack(
+        (toggle_matrix,
+         np.array(prepared_field, dtype=int))
+    )
+
+    solution_matrix = gauss_jordan_eliminator(matrix)
+
+    return solution_matrix[:, -1]
+

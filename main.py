@@ -4,6 +4,7 @@ from PyQt5.QtCore import QTimer
 
 from main.algorithmus.bfs import BreathFirstSearch
 from main.algorithmus.dfs import DeepFirstSearch
+from main.algorithmus.heuristic.gaus import get_heuristic_solution
 from main.utils.toggle import LightToggler
 
 
@@ -103,13 +104,36 @@ def main():
         1, 1, 0, 1, 1
     ]
 
-
-
-    # field = [
-    #     0, 1, 1,
-    #     1, 0, 1,
-    #     1, 1, 0
+    # init_field= [
+    #     1, 1, 0, 1, 1,
+    #     1, 0, 1, 0, 1,
+    #     0, 1, 1, 1, 0,
+    #     1, 0, 1, 0, 1,
+    #     1, 1, 0, 1, 1
     # ]
+    # size_row = 5
+    # size_column = 5
+
+    # init_field = [
+    #     0, 1, 0,
+    #     1, 1, 0,
+    #     1, 0, 0
+    # ]
+    # size_row = 3
+    # size_column = 3
+
+    # init_field= [
+    #     1, 1, 0, 1, 1, 0, 0,
+    #     1, 0, 1, 0, 1, 0, 0,
+    #     0, 1, 1, 1, 0, 0, 0,
+    #     1, 0, 1, 0, 1, 0, 0,
+    #     1, 1, 0, 1, 1, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0
+    # ]
+    # size_row = 7
+    # size_column = 7
+
 
     # print("BFS")
     # toggle_combination, queue_solution = runBFS(size_row, size_column, field)
@@ -120,6 +144,11 @@ def main():
     toggle_combination2, queue_solution2 = runDFS(size_row, size_column, field)
     print(toggle_combination2)
 
+    solution_combination = get_heuristic_solution(field, size_row, size_column)
+    print(solution_combination)
+
+
+
     app = QApplication(sys.argv)
     mainWindow = MainWindow(toggle_combination2, size_row, size_column, field)
     sys.exit(app.exec_())
@@ -127,3 +156,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
