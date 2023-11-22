@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
             for cell_index in range(len(combination)):
                 if combination[cell_index] == 1:
                     QTimer.singleShot(delay, lambda cell_index=cell_index: self.applyToggle(cell_index))
-                    delay += 500
+                    delay += 400
 
     def applyToggle(self, cell_index):
         self.field = self.toggler.on_toggle(cell_index, self.field)
@@ -88,13 +88,15 @@ def main():
 
     # 11 000 000 combination dfs
     # 7 000 000 combination bfs
-    # field = [
+    # init_field = [
     #     1, 1, 1, 1, 1,
     #     1, 1, 1, 1, 0,
     #     1, 0, 1, 0, 0,
     #     0, 1, 1, 0, 1,
     #     0, 0, 0, 0, 1
     # ]
+    # size_row = 5
+    # size_column = 5
 
 
     # init_field= [
@@ -141,30 +143,40 @@ def main():
     # size_row = 8
     # size_column = 8
 
-    init_field = [
-        1, 0, 1,
-        0, 0, 0
-    ]
-    size_row = 2
-    size_column = 3
-
     # init_field = [
-    #     1, 1, 1,
-    #     1, 0, 0,
-    #     1, 0, 0
+    #     1, 0, 1,
+    #     0, 0, 0
     # ]
-    # size_row = 3
+    # size_row = 2
     # size_column = 3
 
-    # print("BFS")
-    # toggle_combination, queue_solution = runBFS(size_row, size_column, field)
-    # print(toggle_combination)
-    # print("\n==============\n")
+    init_field = [
+        1, 0, 0,
+        0, 1, 1,
+        0, 0, 1
+    ]
+    size_row = 3
+    size_column = 3
 
-    # print("DFS")
-    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
-    # print()
-    # print(toggle_combination2)
+
+
+    print("DFS")
+    toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
+    print(toggle_combination2)
+    print("\n==============\n")
+
+    print("BFS")
+    toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
+    print(toggle_combination)
+
+
+    # size_row = 25
+    # size_column = 25
+    # init_field = [0] * size_row * size_column
+    # init_field[0] = 1
+    # init_field[20] = 1
+    # init_field[30] = 1
+    # init_field[31] = 1
 
 
     solution_combination = get_heuristic_solution(init_field, size_row, size_column)
