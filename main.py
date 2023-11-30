@@ -2,10 +2,10 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QPushButton
 from PyQt5.QtCore import QTimer
 
-from main.algorithmus.bfs import BreathFirstSearch
-from main.algorithmus.dfs import DeepFirstSearch
+from main.algorithmus.bfs.bfs import BreathFirstSearch
+from main.algorithmus.dfs.dfs import DeepFirstSearch
 from main.algorithmus.heuristic.gaus import get_heuristic_solution
-from main.utils.toggle import LightToggler
+from main.utils.toggle.toggle import LightToggler
 
 
 class MainWindow(QMainWindow):
@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
             for cell_index in range(len(combination)):
                 if combination[cell_index] == 1:
                     QTimer.singleShot(delay, lambda cell_index=cell_index: self.applyToggle(cell_index))
-                    delay += 400
+                    delay += 1000
 
     def applyToggle(self, cell_index):
         self.field = self.toggler.on_toggle(cell_index, self.field)
@@ -144,8 +144,8 @@ def main():
     # size_column = 8
 
     # init_field = [
-    #     1, 0, 1,
-    #     0, 0, 0
+    #     0, 0, 1,
+    #     0, 1, 1
     # ]
     # size_row = 2
     # size_column = 3
@@ -153,34 +153,48 @@ def main():
     init_field = [
         1, 0, 0,
         0, 1, 1,
-        0, 0, 1
+        0, 1, 1
     ]
     size_row = 3
     size_column = 3
 
+    # init_field = [
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 1, 0, 0,
+    #     0, 0, 0, 1, 1,
+    #     0, 0, 0, 1, 1
+    # ]
+    # size_row = 5
+    # size_column = 5
 
+    # init_field = [
+    #     1, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    # ]
+    # size_row = 5
+    # size_column = 5
+
+    solution_combination = get_heuristic_solution(init_field, size_row, size_column)
+    print(solution_combination)
 
     print("DFS")
     toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
     print(toggle_combination2)
     print("\n==============\n")
-
+    #
+    #
     print("BFS")
     toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
     print(toggle_combination)
 
 
-    # size_row = 25
-    # size_column = 25
-    # init_field = [0] * size_row * size_column
-    # init_field[0] = 1
-    # init_field[20] = 1
-    # init_field[30] = 1
-    # init_field[31] = 1
 
 
-    solution_combination = get_heuristic_solution(init_field, size_row, size_column)
-    print(solution_combination)
+
 
     # toggler = LightToggler(size_row, size_column)
     #

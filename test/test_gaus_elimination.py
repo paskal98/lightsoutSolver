@@ -1,7 +1,7 @@
 import unittest
 
 from main.algorithmus.heuristic.gaus import get_heuristic_solution
-from main.utils.toggle import LightToggler
+from main.utils.toggle.toggle import LightToggler
 
 
 class TestOnToggle(unittest.TestCase):
