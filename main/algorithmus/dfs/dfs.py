@@ -63,7 +63,7 @@ class DeepFirstSearch:
             if self.is_solved(init_field):
                 toggle_combination.append(new_current)
                 print("solved")
-                # break
+                break
             n=n+1
 
         print(n)

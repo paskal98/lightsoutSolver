@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QPushButton
 from PyQt5.QtCore import QTimer
 
+from main.algorithmus.A_start.a_star import GreedySearch
 from main.algorithmus.bfs.bfs import BreathFirstSearch
 from main.algorithmus.dfs.dfs import DeepFirstSearch
 from main.algorithmus.heuristic.gaus import get_heuristic_solution
@@ -81,6 +82,15 @@ def runDFS(size_row, size_column ,field):
         print(f"An error occurred while running DFS: {e}")
         return []
 
+def runGreedy(size_row, size_column, field):
+    try:
+        greedy_search = GreedySearch(size_row, size_column, field)
+        execution_time, toggle_combination, _ = greedy_search.solve()
+        return toggle_combination, execution_time
+    except Exception as e:
+        print(f"An error occurred while running Greedy Search: {e}")
+        return [], 0
+
 
 def main():
     size_row = 5
@@ -143,20 +153,20 @@ def main():
     # size_row = 8
     # size_column = 8
 
+    init_field = [
+        1, 0, 1,
+        1, 0, 1
+    ]
+    size_row = 2
+    size_column = 3
+
     # init_field = [
-    #     0, 0, 1,
+    #     1, 0, 0,
+    #     0, 1, 1,
     #     0, 1, 1
     # ]
-    # size_row = 2
+    # size_row = 3
     # size_column = 3
-
-    init_field = [
-        1, 0, 0,
-        0, 1, 1,
-        0, 1, 1
-    ]
-    size_row = 3
-    size_column = 3
 
     # init_field = [
     #     0, 0, 0, 0, 0,
@@ -178,18 +188,25 @@ def main():
     # size_row = 5
     # size_column = 5
 
-    solution_combination = get_heuristic_solution(init_field, size_row, size_column)
-    print(solution_combination)
 
-    print("DFS")
-    toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
-    print(toggle_combination2)
+
+    # solution_combination = get_heuristic_solution(init_field, size_row, size_column)
+    # print(solution_combination)
+
+    # print("DFS")
+    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
+    # print(toggle_combination2)
+    # print("\n==============\n")
+    # #
+    # #
+    # print("BFS")
+    # toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
+    # print(toggle_combination)
+
+    print("A*")
+    toggle_combination3, queue_solution3 = runGreedy(size_row, size_column, init_field)
+    print(toggle_combination3)
     print("\n==============\n")
-    #
-    #
-    print("BFS")
-    toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
-    print(toggle_combination)
 
 
 
@@ -209,9 +226,9 @@ def main():
     # print(toggle_combination3)
 
 
-    app = QApplication(sys.argv)
-    mainWindow = MainWindow([solution_combination], size_row, size_column, init_field)
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # mainWindow = MainWindow([solution_combination], size_row, size_column, init_field)
+    # sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
