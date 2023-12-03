@@ -88,7 +88,7 @@ class BreathFirstSearch:
                         # Save combination to solve
                         if self.is_solved(init_field):
                             toggle_combination.append(new_states)
-                            print("solved")
+                            # print("solved")
                             escape_loop = True
                             break
 
@@ -109,7 +109,7 @@ class BreathFirstSearch:
                 # Save combination to solve
                 if self.is_solved(init_field):
                     toggle_combination.append(new_states)
-                    print("solved")
+                    # print("solved")
                     break
                 numbers = numbers + 1
                 # if numbers % 250000 == 0:
@@ -118,11 +118,11 @@ class BreathFirstSearch:
             if escape_loop:
                 break
 
-        print(numbers)
+        print(f"Iteration of solution (node): {numbers}")
 
         # End measuring time
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"Execution Time: {execution_time} seconds")
+        print(f"Execution Time:               {execution_time} seconds")
 
         return execution_time, toggle_combination, main_stack['combos']

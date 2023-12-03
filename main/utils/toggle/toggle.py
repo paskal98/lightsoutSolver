@@ -7,10 +7,6 @@ class LightToggler:
     def xor(self, cell):
         return cell ^ 1
 
-    def is_valid_index(self, cell_index):
-        min_range = cell_index
-        while (min_range % self.size_row != 0):
-            min_range -= 1
 
     def get_indxs(self, cell_index):
         indxs = []

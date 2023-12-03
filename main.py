@@ -7,12 +7,13 @@ from PyQt5.QtCore import QTimer
 from main.algorithmus.A_start.a_star import AStar
 from main.algorithmus.bfs.bfs import BreathFirstSearch
 from main.algorithmus.dfs.dfs import DeepFirstSearch
+from main.algorithmus.greedy.greedy import GreedySearch
 from main.algorithmus.heuristic.gaus import get_heuristic_solution
 from main.utils.toggle.toggle import LightToggler
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, toggle_combination, size_row, size_column, initial_field):
+    def __init__(self, toggle_combination, size_row, size_column, initial_field, name="Light Toggle Visualization"):
         super().__init__()
         self.toggle_combination = toggle_combination
         self.size_row = size_row
@@ -20,6 +21,7 @@ class MainWindow(QMainWindow):
         self.initial_field = initial_field.copy()
         self.field = initial_field.copy()
         self.toggler = LightToggler(size_row, size_column)
+        self.name=name
         self.initUI()
 
     def initUI(self):
@@ -39,7 +41,7 @@ class MainWindow(QMainWindow):
         self.startButton.clicked.connect(self.startVisualization)
         self.gridLayout.addWidget(self.startButton, self.size_row, 0, 1, self.size_column)
 
-        self.setWindowTitle('Light Toggle Visualization')
+        self.setWindowTitle(self.name)
         self.show()
 
     def startVisualization(self):
@@ -93,6 +95,15 @@ def runAStart(size_row, size_column, field):
         print(f"An error occurred while running Greedy Search: {e}")
         return [], 0
 
+def runGreedy(size_row, size_column, field):
+    try:
+        greedy_search = GreedySearch(size_row, size_column, field)
+        execution_time, toggle_combination, _ = greedy_search.solve()
+        return toggle_combination, execution_time
+    except Exception as e:
+        print(f"An error occurred while running Greedy Search: {e}")
+        return [], 0
+
 
 def main():
     size_row = 5
@@ -121,13 +132,13 @@ def main():
     # size_row = 5
     # size_column = 5
 
-    # init_field = [
-    #     0, 1, 0,
-    #     1, 1, 0,
-    #     1, 0, 0
-    # ]
-    # size_row = 3
-    # size_column = 3
+    init_field = [
+        0, 1, 0,
+        1, 1, 0,
+        1, 0, 0
+    ]
+    size_row = 3
+    size_column = 3
 
     # init_field= [
     #     1, 1, 0, 1, 1, 0, 0,
@@ -155,17 +166,17 @@ def main():
     # size_row = 8
     # size_column = 8
 
-    init_field = [
-        1, 0, 1,
-        1, 0, 1
-    ]
-    size_row = 2
-    size_column = 3
+    # init_field = [
+    #     1, 0, 1,
+    #     1, 0, 1
+    # ]
+    # size_row = 2
+    # size_column = 3
 
     # init_field = [
-    #     1, 0, 0,
-    #     0, 1, 1,
-    #     0, 1, 1
+    #     0, 0, 0,
+    #     0, 1, 0,
+    #     0, 0, 0
     # ]
     # size_row = 3
     # size_column = 3
@@ -190,26 +201,50 @@ def main():
     size_row = 5
     size_column = 5
 
+    # init_field = [
+    #     1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    #
+    # ]
+    # size_row = 10
+    # size_column = 10
+
+
+
+    # print("BFS")
+    # toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
+    # print(toggle_combination)
+    # print("---------------------------------------------------------------\n")
+    #
+    # print("DFS")
+    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
+    # print(toggle_combination2)
+    # print("---------------------------------------------------------------\n")
+
+    print("Greedy")
+    toggle_combination4, queue_solution4 = runGreedy(size_row, size_column, init_field)
+    print(toggle_combination4)
+    print("---------------------------------------------------------------\n")
+
     print("A*")
     toggle_combination3, queue_solution3 = runAStart(size_row, size_column, init_field)
     print(toggle_combination3)
-    print("\n==============\n")
+    print("---------------------------------------------------------------\n")
+
 
     solution_combination = get_heuristic_solution(init_field, size_row, size_column)
     print(solution_combination)
 
-
-
-    # print("DFS")
-    # toggle_combination2, queue_solution2 = runDFS(size_row, size_column, init_field)
-    # print(toggle_combination2)
-    # print("\n==============\n")
-    # #
-    # #
-    # print("BFS")
-    # toggle_combination, queue_solution = runBFS(size_row, size_column, init_field)
-    # print(toggle_combination)
-
+    are_same_1_2 = np.array_equal(np.array(toggle_combination4), solution_combination)
+    print(f"Array1 is the same as Array2: {are_same_1_2} ")
 
 
 
@@ -230,9 +265,26 @@ def main():
     # print(toggle_combination3)
 
 
-    app = QApplication(sys.argv)
-    mainWindow = MainWindow([np.array(toggle_combination3)], size_row, size_column, init_field)
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # mainWindow = MainWindow([solution_combination], size_row, size_column, init_field,"GAUSS")
+    #
+    #
+    # app2 = QApplication(sys.argv)
+    # mainWindow2 = MainWindow(np.array(toggle_combination), size_row, size_column, init_field,"BFS")
+    #
+    #
+    # app3 = QApplication(sys.argv)
+    # mainWindow3 = MainWindow(np.array(toggle_combination2), size_row, size_column, init_field,"DFS")
+    #
+    #
+    # app4 = QApplication(sys.argv)
+    # mainWindow4 = MainWindow([np.array(toggle_combination3)], size_row, size_column, init_field,"A*")
+
+
+    app5 = QApplication(sys.argv)
+    mainWindow5 = MainWindow([np.array(toggle_combination4)], size_row, size_column, init_field, "Greedy")
+
+    sys.exit(app5.exec_())
 
 
 if __name__ == '__main__':

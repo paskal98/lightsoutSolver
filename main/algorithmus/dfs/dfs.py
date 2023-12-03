@@ -62,11 +62,11 @@ class DeepFirstSearch:
             # Save combination to solve
             if self.is_solved(init_field):
                 toggle_combination.append(new_current)
-                print("solved")
+                # print("solved")
                 break
             n=n+1
 
-        print(n)
+        print(f"Iteration of solution (node): {n}")
 
 
 
@@ -74,6 +74,6 @@ class DeepFirstSearch:
         # End measuring time
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"Execution Time: {execution_time} seconds")
+        print(f"Execution Time:               {execution_time} seconds")
 
         return execution_time, toggle_combination, combinations
