@@ -11,11 +11,12 @@ def filed_data(field, iteration):
 class BreathFirstSearch:
     step_by_step_solution = []
 
-    def __init__(self, size_row, size_column, input_field):
+    def __init__(self, size_row, size_column, input_field, event_bus):
         self.input_field = input_field
         self.size_row = size_row
         self.size_column = size_column
         self.cells_count = size_row * size_column
+        self.eventBus = event_bus
 
     def is_solved(self, field):
         for i in range(len(self.input_field)):
@@ -85,7 +86,7 @@ class BreathFirstSearch:
                             if new_states[cell_index] == 1:
                                 init_field = toggler.on_toggle(cell_index, init_field.copy())
 
-                        # Save combination to solve
+                        
                         if self.is_solved(init_field):
                             toggle_combination.append(new_states)
                             # print("solved")
@@ -107,6 +108,7 @@ class BreathFirstSearch:
                         init_field = toggler.on_toggle(cell_index, init_field.copy())
 
                 # Save combination to solve
+                self.eventBus.publish('test',init_field)
                 if self.is_solved(init_field):
                     toggle_combination.append(new_states)
                     # print("solved")

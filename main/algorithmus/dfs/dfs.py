@@ -1,7 +1,5 @@
 import time
-
 from main.utils.toggle.toggle import LightToggler
-
 
 def filed_data(field, iteration):
     return {
@@ -11,12 +9,13 @@ def filed_data(field, iteration):
 
 class DeepFirstSearch:
     step_by_step_solution = []
-
-    def __init__(self, size_row, size_column, input_field):
+    
+    def __init__(self, size_row, size_column, input_field,event_bus):
         self.input_field = input_field
         self.size_row = size_row
         self.size_column = size_column
         self.cells_count = size_row * size_column
+        self.eventBus = event_bus
 
     def is_solved(self, field):
         for i in range(len(self.input_field)):
@@ -56,8 +55,9 @@ class DeepFirstSearch:
             # Check if combination solve problem
             init_field = ([0] * self.cells_count)
             for cell_index in range(self.cells_count):
-                if new_current[cell_index] == 1:
+                if new_current[cell_index] == 1:    
                     init_field = toggler.on_toggle(cell_index, init_field.copy())
+                    self.eventBus.publish('test',init_field)
 
             # Save combination to solve
             if self.is_solved(init_field):
@@ -69,11 +69,11 @@ class DeepFirstSearch:
         print(f"Iteration of solution (node): {n}")
 
 
-
-
         # End measuring time
         end_time = time.time()
         execution_time = end_time - start_time
         print(f"Execution Time:               {execution_time} seconds")
 
         return execution_time, toggle_combination, combinations
+
+

@@ -8,11 +8,13 @@ from main.utils.toggle.toggle import LightToggler
 class AStar:
     step_by_step_solution = []
 
-    def __init__(self, size_row, size_column, input_field):
+    def __init__(self, size_row, size_column, input_field, event_bus):
         self.input_field = input_field
         self.size_row = size_row
         self.size_column = size_column
         self.cells_count = size_row * size_column
+        self.eventBus = event_bus
+
 
     def is_solved(self, field):
         return all(cell == 0 for cell in field)
@@ -47,6 +49,7 @@ class AStar:
 
                 heapq.heappush(heap, (priority, idx + 1, init_field, init_toggled))
                 m = m + 1
+                self.eventBus.publish('test',init_field)
                 if self.is_solved(init_field):
                     escape = True
                     break
