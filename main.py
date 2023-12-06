@@ -9,12 +9,11 @@ from main.algorithmus.bfs.bfs import BreathFirstSearch
 from main.algorithmus.dfs.dfs import DeepFirstSearch
 from main.algorithmus.greedy.greedy import GreedySearch
 
-GRID_SIZE = 5
+COL = 5
+ROW = 5
 CELL_SIZE = 80
 
 event_bus = EventBus()
-
-# board_1d = board.flatten()
 
 pygame.init()
 
@@ -107,14 +106,13 @@ def check_win(board):
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
 
-
 def handle_game_event(enteredArray):
     global board
     npArr = np.array(enteredArray)
     if (current_index_board == 0):
         board = npArr.reshape(2, 3)
     else:
-        board = npArr.reshape(5, 5)
+        board = npArr.reshape(ROW, COL)
     delay_seconds = 0.1
     time.sleep(delay_seconds)
     draw_board(board, 400)
@@ -127,22 +125,19 @@ def solveMap(rows, cols, board_1d):
     global show_solution
     global toggled
     if(current_index_algorithm == 0):
-        bfs = BreathFirstSearch(rows, cols,board_1d,event_bus=event_bus)
+        bfs = BreathFirstSearch(rows, cols, board_1d, event_bus=event_bus)
         execution_time, toggle_combination, _ = bfs.solve()
-    elif (current_index_algorithm == 1):
+    elif(current_index_algorithm == 1):
         dfs = DeepFirstSearch(rows, cols, board_1d, event_bus=event_bus)
         time, toggle_combination, queue_solution = dfs.solve()
-    elif (current_index_algorithm == 2):
+    elif(current_index_algorithm == 2):
         greedy = GreedySearch(rows, cols, board_1d, event_bus=event_bus)
         time, toggle_combination, _ = greedy.solve()
     elif(current_index_algorithm == 3):
-        aStar = AStar(rows,cols,board_1d,event_bus)
+        aStar = AStar(rows, cols, board_1d, event_bus)
         execution_time, toggle_combination, _ = aStar.solve()
-    show_solution = True
     toggled = toggle_combination
-    return draw_solution_board(board,-300)
-
-
+    show_solution = True
 
 def draw_solution_board(board, x_offset):
     global CELL_SIZE
@@ -160,7 +155,7 @@ def draw_solution_board(board, x_offset):
         for col in range(cols):
             color = "Yellow" if board[row, col] else "White"
             l = color
-            color = "Green" if toggledMap[row,col] else l
+            color = "Green" if toggledMap[row, col] else l
             cell_rect = pygame.Rect(col * CELL_SIZE + 400 + x_offset, row * CELL_SIZE + 150, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(SCREEN, color, cell_rect)
             pygame.draw.rect(SCREEN, "Black", cell_rect, border_width)
@@ -183,28 +178,27 @@ def draw_board(board, x_offset):
             pygame.draw.rect(SCREEN, color, cell_rect)
             pygame.draw.rect(SCREEN, "Black", cell_rect, border_width)
 
-
-
 def toggle_lights(grid, row, col):
     global show_solution
     global toggled
-    # if(show_solution):
-    #     rows, cols = grid.shape
-    #     toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
-    #     toggledMap[row][col] = False
-    #     toggled = toggledMap.astype(int).flatten().tolist()
+    if show_solution:
+        rows, cols = grid.shape
+        if 0 <= row < rows and 0 <= col < cols:
+            toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
+            toggledMap[row][col] = False
+            toggled = toggledMap.astype(int).flatten().tolist()
 
     rows, cols = len(grid), len(grid[0])
     if 0 <= row < rows and 0 <= col < cols:
         grid[row][col] = not grid[row][col]
         if row > 0:
-            grid[row - 1][col] = not grid[row - 1][col]  # Toggle cell above
+            grid[row - 1][col] = not grid[row - 1][col]
         if row < rows - 1:
-            grid[row + 1][col] = not grid[row + 1][col]  # Toggle cell below
+            grid[row + 1][col] = not grid[row + 1][col]
         if col > 0:
-            grid[row][col - 1] = not grid[row][col - 1]  # Toggle cell to the left
+            grid[row][col - 1] = not grid[row][col - 1]
         if col < cols - 1:
-            grid[row][col + 1] = not grid[row][col + 1]  # Toggle cell to the right
+            grid[row][col + 1] = not grid[row][col + 1]
 
 
 
@@ -223,20 +217,17 @@ def get_map_data():
 def play():
     pygame.display.set_caption("Lights Out!")
 
-    rows, cols = get_board_size()
+    rows, cols = get_board_size()  
 
     board, board_1d = get_map_data()
-    start_time = None
-
     while True:
-
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
         PLAY_TEXT = get_font(45).render("LIGHTS OUT", True, "Yellow")
         PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 90))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
-    
+
         if(current_index_board == 0):
             PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
             PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 450))
@@ -257,22 +248,22 @@ def play():
             SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
 
         if(current_index_board == 0):
-            PLAY_BACK = Button(image=None, pos=(640, 599), 
+            PLAY_BACK = Button(image=None, pos=(640, 599),
                             text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
         else:
             PLAY_BACK = Button(image=None, pos=(640, 660),
-                               text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
+                            text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
 
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
 
 
         if(current_index_board == 0):
-            PLAY_SOLVE = Button(image=None, pos=(640, 490), 
+            PLAY_SOLVE = Button(image=None, pos=(640, 490),
                             text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
         else:
             PLAY_SOLVE = Button(image=None, pos=(640, 590),
-                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red") 
+                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
 
         PLAY_SOLVE.changeColor(PLAY_MOUSE_POS)
         PLAY_SOLVE.update(SCREEN)
@@ -290,9 +281,8 @@ def play():
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
                     event_bus.subscribe('test', handle_game_event)
                     solveMap(rows, cols, board_1d)
-
-                for row in range(GRID_SIZE):
-                    for col in range(GRID_SIZE):
+                for row in range(ROW):
+                    for col in range(COL):
                         x_pos = col * CELL_SIZE + 400 - 300  # Adjust for the left offset
                         y_pos = row * CELL_SIZE + 150
                         cell_rect = pygame.Rect(x_pos, y_pos, CELL_SIZE, CELL_SIZE)
@@ -317,8 +307,7 @@ def options():
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
-                                   text_input=ALGORITH_OPTIONS[current_index_algorithm], font=get_font(45),
-                                   base_color="White", hovering_color="Green")
+                                text_input=ALGORITH_OPTIONS[current_index_algorithm], font=get_font(45), base_color="White", hovering_color="Green")
 
         OPTIONS_ALGORITHM.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_ALGORITHM.update(SCREEN)
@@ -328,14 +317,14 @@ def options():
         SCREEN.blit(OPTIONS_TEXT_BOARD, OPTIONS_RECT_BOARD)
 
         OPTIONS_BOARD = Button(image=None, pos=(640, 460),
-                               text_input=str(BOARD_OPTIONS[current_index_board]),
-                               font=get_font(45), base_color="White", hovering_color="Green")
+                       text_input=str(BOARD_OPTIONS[current_index_board]),
+                       font=get_font(45), base_color="White", hovering_color="Green")
 
         OPTIONS_BOARD.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BOARD.update(SCREEN)
 
         OPTIONS_BACK = Button(image=None, pos=(640, 599),
-                              text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
+                            text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
@@ -408,6 +397,8 @@ def select_map():
 
 
 def main_menu():
+
+
     while True:
         SCREEN.blit(BG, (0, 0))
 
@@ -416,14 +407,14 @@ def main_menu():
         MENU_TEXT = get_font(100).render("Lights Out", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(400, 250),
-                             text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250),
+                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400),
-                                text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550),
-                             text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         MAP_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(900, 250),
                             text_input="MAP", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
