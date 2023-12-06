@@ -126,5 +126,5 @@ class BreathFirstSearch:
         end_time = time.time()
         execution_time = end_time - start_time
         print(f"Execution Time:               {execution_time} seconds")
-
+        self.eventBus.clearEvents()
         return execution_time, toggle_combination, main_stack['combos']

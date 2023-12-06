@@ -55,8 +55,5 @@ class GreedySearch:
                     execution_time = end_time - start_time
                     print(f"Iteration of solution: {m}")
                     print(f"Execution Time:        {execution_time} seconds")
-
+                    self.eventBus.clearEvents()
                     return execution_time, toggled, None
-
-
-
