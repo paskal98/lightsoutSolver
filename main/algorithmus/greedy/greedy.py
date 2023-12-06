@@ -35,6 +35,7 @@ class GreedySearch:
 
         while heap:
             price, idx, current, toggled = heapq.heappop(heap)
+            self.eventBus.publish('test', current)
 
             for cell_index in range(self.cells_count - 1, -1, -1):
                 init_field = toggler.on_toggle(cell_index, current.copy())
@@ -47,7 +48,7 @@ class GreedySearch:
                 heapq.heappush(heap, (priority + (price / coefficient * math.sqrt(self.size_row)), idx + 1, init_field, init_toggled))
                 m += 1
                 
-                self.eventBus.publish('test',init_field)
+
                 if self.is_solved(init_field):
                     price, idx, current, toggled = heapq.heappop(heap)
                     end_time = time.time()

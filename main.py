@@ -116,10 +116,21 @@ def play() :
 
     rows, cols = get_board_size()  
     board = np.random.randint(2, size=(rows, cols), dtype=bool)
-
-
     board_1d = board.astype(int).flatten().tolist()
+
     start_time = None
+
+
+    # init_field = [
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 1, 0, 0,
+    #     0, 0, 0, 1, 1,
+    #     0, 0, 0, 1, 1
+    # ]
+    #
+    # board = np.array(init_field, dtype=bool).reshape(5, 5)
+    # board_1d = (np.array(init_field).reshape(5, 5)).astype(int).flatten().tolist()
 
     while True:
         
