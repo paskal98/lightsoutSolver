@@ -23,7 +23,6 @@ show_solution = False
 toggled = []
 ALGORITH_OPTIONS = ['BFS','DFS','GREEDY', 'A*']
 BOARD_OPTIONS = [(2, 3), (5, 5)]
-
 current_index_map_2x3 = 0
 current_index_map_5x5 = 0
 
@@ -113,8 +112,8 @@ def handle_game_event(enteredArray):
         board = npArr.reshape(2, 3)
     else:
         board = npArr.reshape(ROW, COL)
-    delay_seconds = 0.1
-    time.sleep(delay_seconds)
+    # delay_seconds = 0.1
+    # time.sleep(delay_seconds)
     draw_board(board, 400)
     pygame.display.update()
 
@@ -137,7 +136,9 @@ def solveMap(rows, cols, board_1d):
         aStar = AStar(rows, cols, board_1d, event_bus)
         execution_time, toggle_combination, _ = aStar.solve()
     toggled = toggle_combination
+    print(toggled)
     show_solution = True
+    
 
 def draw_solution_board(board, x_offset):
     global CELL_SIZE
@@ -219,6 +220,10 @@ def get_map_data():
 
 
 def play():
+    global show_solution
+    start_time = None
+    timer_running = False
+    elapsed_time = 0
     pygame.display.set_caption("Lights Out!")
     rows, cols = get_board_size()  
     board, board_1d = get_map_data()
@@ -272,7 +277,8 @@ def play():
 
         draw_board(board, -300) if show_solution == False else draw_solution_board(board,-300)
 
-        draw_board(board, 400)
+        draw_board(board, 400) if show_solution == False else draw_board(np.full((rows, cols), False), 400)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -281,6 +287,8 @@ def play():
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                     main_menu()
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
+                    start_time = time.time()
+                    timer_running = True
                     event_bus.subscribe('test', handle_game_event)
                     solveMap(rows, cols, board_1d)
                 for row in range(ROW):
@@ -290,10 +298,18 @@ def play():
                         cell_rect = pygame.Rect(x_pos, y_pos, CELL_SIZE, CELL_SIZE)
                         if cell_rect.collidepoint(PLAY_MOUSE_POS):
                             toggle_lights(board, row, col)
+            if timer_running:
+                elapsed_time = time.time() - start_time
 
+            if show_solution:
+                timer_running = False
 
+            # Display the timer
+            timer_text = get_font(20).render(f"Time: {elapsed_time:.2f} seconds", True, "White")
+            timer_rect = timer_text.get_rect(center=(1000, 130))
+            SCREEN.blit(timer_text, timer_rect)
 
-        pygame.display.update()
+            pygame.display.update()
 
 
 def options():
@@ -421,7 +437,7 @@ def main_menu():
         MENU_TEXT = get_font(100).render("Lights Out", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(450, 250),
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(420, 250),
                             text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400),

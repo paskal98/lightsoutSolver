@@ -50,10 +50,9 @@ class GreedySearch:
                 
 
                 if self.is_solved(init_field):
-                    price, idx, current, toggled = heapq.heappop(heap)
                     end_time = time.time()
                     execution_time = end_time - start_time
                     print(f"Iteration of solution: {m}")
                     print(f"Execution Time:        {execution_time} seconds")
                     self.eventBus.clearEvents()
-                    return execution_time, toggled, None
+                    return execution_time, init_toggled, None
