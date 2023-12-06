@@ -209,18 +209,29 @@ def play():
         PLAY_TEXT = get_font(45).render("LIGHTS OUT", True, "Yellow")
         PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 90))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+    
+        if(current_index_board == 0):
+            PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
+            PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 450))
+            SCREEN.blit(PLAY_MAP, PLAY_MAAP)
 
-        PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
-        PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 450))
-        SCREEN.blit(PLAY_MAP, PLAY_MAAP)
+            PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
+            SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
+        else:
+            PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
+            PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 590))
+            SCREEN.blit(PLAY_MAP, PLAY_MAAP)
 
-        PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
-        PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
-        SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
+            PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 590))
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 590))
+            SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
 
-        if (current_index_board == 0):
-            PLAY_BACK = Button(image=None, pos=(640, 599),
-                               text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
+        if(current_index_board == 0):
+            PLAY_BACK = Button(image=None, pos=(640, 599), 
+                            text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
         else:
             PLAY_BACK = Button(image=None, pos=(640, 660),
                                text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
@@ -228,12 +239,13 @@ def play():
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
 
-        if (current_index_board == 0):
-            PLAY_SOLVE = Button(image=None, pos=(640, 490),
-                                text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
+
+        if(current_index_board == 0):
+            PLAY_SOLVE = Button(image=None, pos=(640, 490), 
+                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
         else:
             PLAY_SOLVE = Button(image=None, pos=(640, 590),
-                                text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
+                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red") 
 
         PLAY_SOLVE.changeColor(PLAY_MOUSE_POS)
         PLAY_SOLVE.update(SCREEN)
@@ -248,6 +260,8 @@ def play():
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                     main_menu()
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
+                    start_time = time.time()
+                    pygame.display.update()
                     event_bus.subscribe('test', handle_game_event)
                     solveMap(rows, cols, board_1d)
 
