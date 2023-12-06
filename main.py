@@ -9,24 +9,84 @@ from main.algorithmus.bfs.bfs import BreathFirstSearch
 from main.algorithmus.dfs.dfs import DeepFirstSearch
 from main.algorithmus.greedy.greedy import GreedySearch
 
-
-
-GRID_SIZE = 5  
-CELL_SIZE = 80  
+GRID_SIZE = 5
+CELL_SIZE = 80
 
 event_bus = EventBus()
-
 
 # board_1d = board.flatten()
 
 pygame.init()
 
 current_index_algorithm = 0
-current_index_board = 0 
+current_index_board = 0
 
+current_index_map_2x3 = 0
+current_index_map_5x5 = 0
 
-ALGORITH_OPTIONS = ['BFS','DFS','GREEDY', 'A*']
-BOARD_OPTIONS = [(2, 3), (5, 5)] 
+ALGORITH_OPTIONS = ['BFS', 'DFS', 'GREEDY', 'A*']
+BOARD_OPTIONS = [(2, 3), (5, 5)]
+
+BOARD_2x3_NAME = ["1 (2x3)", "2 (2x3)", "3 (2x3)", "4 (2x3)"]
+BOARD_5x5_NAME = ["1 (5x5)", "2 (5x5)", "3 (5x5)", "4 (5x5)","5 (5x5)","6 (5x5)"]
+
+BOARD_2x3 = [
+    [1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 0, 1],
+    [0, 1, 0, 0, 1, 0],
+    [0, 1, 1, 1, 0, 0]
+]
+
+BOARD_5x5 = [
+    [
+        1, 1, 0, 1, 1,
+        1, 0, 0, 0, 1,
+        0, 0, 0, 0, 0,
+        1, 0, 0, 0, 1,
+        1, 1, 0, 1, 1
+
+    ],
+    [
+        1, 1, 0, 0, 0,
+        1, 0, 1, 0, 1,
+        0, 1, 1, 0, 1,
+        0, 0, 1, 0, 1,
+        0, 0, 0, 0, 0
+
+    ],
+    [
+        1, 1, 0, 0, 0,
+        1, 1, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+
+    ],
+    [
+        1, 1, 0, 0, 0,
+        1, 1, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+
+    ],
+    [
+        1, 1, 0, 1, 1,
+        1, 1, 0, 1, 1,
+        0, 0, 0, 0, 0,
+        1, 1, 0, 1, 1,
+        1, 1, 0, 1, 1
+
+    ],
+    [
+        0, 0, 1, 0, 0,
+        0, 1, 0, 1, 0,
+        1, 0, 1, 0, 1,
+        0, 1, 0, 1, 0,
+        0, 0, 1, 0, 0
+
+    ]
+]
 
 # Create the game screen
 SCREEN = pygame.display.set_mode((1280, 720))
@@ -34,11 +94,14 @@ pygame.display.set_caption("Menu")
 
 BG = pygame.image.load("assets/Background.png")
 
+
 def get_board_size():
     return BOARD_OPTIONS[current_index_board]
 
+
 def check_win(board):
     return np.all(board == False)
+
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
@@ -47,45 +110,43 @@ def get_font(size):
 def handle_game_event(enteredArray):
     global board
     npArr = np.array(enteredArray)
-    if(current_index_board == 0):
+    if (current_index_board == 0):
         board = npArr.reshape(2, 3)
     else:
         board = npArr.reshape(5, 5)
     delay_seconds = 0.2
     time.sleep(delay_seconds)
-    draw_board(board,400)
+    draw_board(board, 400)
     pygame.display.update()
-    
 
-def solveMap(rows,cols,board_1d):
+
+def solveMap(rows, cols, board_1d):
     global current_index_algorithm
-    
-    if(current_index_algorithm == 0):
-        bfs = BreathFirstSearch(rows, cols,board_1d,event_bus=event_bus)
+
+    if (current_index_algorithm == 0):
+        bfs = BreathFirstSearch(rows, cols, board_1d, event_bus=event_bus)
         execution_time, toggle_combination, _ = bfs.solve()
-    elif(current_index_algorithm == 1):
-        dfs = DeepFirstSearch(rows, cols,board_1d,event_bus=event_bus)
+    elif (current_index_algorithm == 1):
+        dfs = DeepFirstSearch(rows, cols, board_1d, event_bus=event_bus)
         time, toggle_combination, queue_solution = dfs.solve()
-    elif(current_index_algorithm == 2):
-        greedy = GreedySearch(rows, cols,board_1d,event_bus=event_bus)
+    elif (current_index_algorithm == 2):
+        greedy = GreedySearch(rows, cols, board_1d, event_bus=event_bus)
         time, toggle_combination, _ = greedy.solve()
-    elif(current_index_algorithm == 3):
-        aStar = AStar(rows,cols,board_1d,event_bus)
+    elif (current_index_algorithm == 3):
+        aStar = AStar(rows, cols, board_1d, event_bus)
         execution_time, toggled, _ = aStar.solve()
-
-
 
 
 def draw_board(board, x_offset):
     border_width = 2
-    rows, cols = board.shape  
+    rows, cols = board.shape
     global CELL_SIZE
 
-    rows, cols = get_board_size()  
+    rows, cols = get_board_size()
     if (rows, cols) == (2, 3):
-        CELL_SIZE = 130  
+        CELL_SIZE = 130
     else:
-        CELL_SIZE = 80   
+        CELL_SIZE = 80
 
     for row in range(rows):
         for col in range(cols):
@@ -108,12 +169,25 @@ def toggle_lights(grid, row, col):
         if col < cols - 1:
             grid[row][col + 1] = not grid[row][col + 1]
 
-def play() :
+
+def get_map_data():
+    global current_index_map_5x5
+    global current_index_map_2x3
+
+    if get_board_size()==(2,3):
+        init_field = BOARD_2x3[current_index_map_2x3]
+        return np.array(init_field, dtype=bool).reshape(2, 3) , (np.array(init_field).reshape(2, 3)).astype(int).flatten().tolist()
+    else:
+        init_field = BOARD_5x5[current_index_map_5x5]
+        return np.array(init_field, dtype=bool).reshape(5, 5), (np.array(init_field).reshape(5, 5)).astype(int).flatten().tolist()
+
+
+def play():
     pygame.display.set_caption("Lights Out!")
 
-    rows, cols = get_board_size()  
-    board = np.random.randint(2, size=(rows, cols), dtype=bool)
-    board_1d = board.astype(int).flatten().tolist()
+    rows, cols = get_board_size()
+    # board = np.random.randint(2, size=(rows, cols), dtype=bool)
+    # board_1d = board.astype(int).flatten().tolist()
 
     # init_field = [
     #     0, 0, 0, 0, 0,
@@ -123,10 +197,12 @@ def play() :
     #     0, 0, 0, 1, 1
     # ]
     #
-    # board = np.array(init_field, dtype=bool).reshape(5, 5)
-    # board_1d = (np.array(init_field).reshape(5, 5)).astype(int).flatten().tolist()
+
+    board, board_1d = get_map_data()
+
+
     while True:
-        
+
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
@@ -142,24 +218,22 @@ def play() :
         PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
         SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
 
-       
-
-        if(current_index_board == 0):
-            PLAY_BACK = Button(image=None, pos=(640, 599), 
-                            text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
+        if (current_index_board == 0):
+            PLAY_BACK = Button(image=None, pos=(640, 599),
+                               text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
         else:
-            PLAY_BACK = Button(image=None, pos=(640, 660), 
-                            text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
+            PLAY_BACK = Button(image=None, pos=(640, 660),
+                               text_input="BACK", font=get_font(40), base_color="White", hovering_color="Green")
 
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
 
-        if(current_index_board == 0):
-            PLAY_SOLVE = Button(image=None, pos=(640, 490), 
-                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
+        if (current_index_board == 0):
+            PLAY_SOLVE = Button(image=None, pos=(640, 490),
+                                text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
         else:
-           PLAY_SOLVE = Button(image=None, pos=(640, 590), 
-                            text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red") 
+            PLAY_SOLVE = Button(image=None, pos=(640, 590),
+                                text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
 
         PLAY_SOLVE.changeColor(PLAY_MOUSE_POS)
         PLAY_SOLVE.update(SCREEN)
@@ -175,7 +249,7 @@ def play() :
                     main_menu()
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
                     event_bus.subscribe('test', handle_game_event)
-                    solveMap(rows,cols,board_1d)
+                    solveMap(rows, cols, board_1d)
 
                 for row in range(GRID_SIZE):
                     for col in range(GRID_SIZE):
@@ -188,7 +262,7 @@ def play() :
 
         pygame.display.update()
 
-    
+
 def options():
     pygame.display.set_caption("Options!")
     global current_index_algorithm
@@ -201,25 +275,26 @@ def options():
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 160))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
-        OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260), 
-                                text_input=ALGORITH_OPTIONS[current_index_algorithm], font=get_font(45), base_color="White", hovering_color="Green")
-        
+        OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
+                                   text_input=ALGORITH_OPTIONS[current_index_algorithm], font=get_font(45),
+                                   base_color="White", hovering_color="Green")
+
         OPTIONS_ALGORITHM.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_ALGORITHM.update(SCREEN)
 
         OPTIONS_TEXT_BOARD = get_font(50).render("SELECT BOARD", True, "White")
         OPTIONS_RECT_BOARD = OPTIONS_TEXT_BOARD.get_rect(center=(640, 360))
         SCREEN.blit(OPTIONS_TEXT_BOARD, OPTIONS_RECT_BOARD)
-        
-        OPTIONS_BOARD = Button(image=None, pos=(640, 460), 
-                       text_input=str(BOARD_OPTIONS[current_index_board]), 
-                       font=get_font(45), base_color="White", hovering_color="Green")
-        
+
+        OPTIONS_BOARD = Button(image=None, pos=(640, 460),
+                               text_input=str(BOARD_OPTIONS[current_index_board]),
+                               font=get_font(45), base_color="White", hovering_color="Green")
+
         OPTIONS_BOARD.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BOARD.update(SCREEN)
-        
-        OPTIONS_BACK = Button(image=None, pos=(640, 599), 
-                            text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
+
+        OPTIONS_BACK = Button(image=None, pos=(640, 599),
+                              text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
@@ -241,9 +316,57 @@ def options():
         pygame.display.update()
 
 
+def select_map():
+    pygame.display.set_caption("Maps!")
+    global current_index_map_2x3
+    global current_index_map_5x5
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+        SCREEN.fill("black")
+
+        OPTIONS_TEXT = get_font(36).render("SELECT MAP", True, "White")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 160))
+        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
+
+        if get_board_size() == (2, 3):
+            OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
+                                       text_input=BOARD_2x3_NAME[current_index_map_2x3], font=get_font(45),
+                                       base_color="White", hovering_color="Green")
+        else:
+            OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
+                                       text_input=BOARD_5x5_NAME[current_index_map_5x5], font=get_font(45),
+                                       base_color="White", hovering_color="Green")
+
+        OPTIONS_ALGORITHM.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_ALGORITHM.update(SCREEN)
+
+        OPTIONS_BACK = Button(image=None, pos=(640, 599),
+                              text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
+
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu()
+                elif OPTIONS_ALGORITHM.checkForInput(OPTIONS_MOUSE_POS):
+
+                    if get_board_size() == (2, 3):
+                        current_index_map_2x3 = (current_index_map_2x3 + 1) % len(BOARD_2x3_NAME)
+                        OPTIONS_ALGORITHM.text_input = BOARD_2x3_NAME[current_index_map_2x3]
+                    else:
+                        current_index_map_5x5 = (current_index_map_5x5 + 1) % len(BOARD_5x5_NAME)
+                        OPTIONS_ALGORITHM.text_input = BOARD_5x5_NAME[current_index_map_5x5]
+
+
+        pygame.display.update()
+
+
 def main_menu():
-
-
     while True:
         SCREEN.blit(BG, (0, 0))
 
@@ -252,21 +375,24 @@ def main_menu():
         MENU_TEXT = get_font(100).render("Lights Out", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250), 
-                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        
-        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400), 
-                            text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        
-        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550), 
-                            text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(400, 250),
+                             text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+
+        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400),
+                                text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+
+        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550),
+                             text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+
+        MAP_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(900, 250),
+                            text_input="MAP", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, MAP_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(SCREEN)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -274,6 +400,8 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     play()
+                if MAP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    select_map()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -281,5 +409,6 @@ def main_menu():
                     sys.exit()
 
         pygame.display.update()
+
 
 main_menu()
