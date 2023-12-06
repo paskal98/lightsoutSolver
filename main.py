@@ -21,10 +21,10 @@ event_bus = EventBus()
 
 pygame.init()
 
-current_index_algorithm = 0
-current_index_board = 0 
-
-
+current_index_algorithm = 3
+current_index_board = 1
+show_solution = False
+toggled = []
 ALGORITH_OPTIONS = ['BFS','DFS','GREEDY', 'A*']
 BOARD_OPTIONS = [(2, 3), (5, 5)] 
 
@@ -51,7 +51,7 @@ def handle_game_event(enteredArray):
         board = npArr.reshape(2, 3)
     else:
         board = npArr.reshape(5, 5)
-    delay_seconds = 0.2
+    delay_seconds = 0.1
     time.sleep(delay_seconds)
     draw_board(board,400)
     pygame.display.update()
@@ -59,7 +59,9 @@ def handle_game_event(enteredArray):
 
 def solveMap(rows,cols,board_1d):
     global current_index_algorithm
-    
+    global board
+    global show_solution
+    global toggled
     if(current_index_algorithm == 0):
         bfs = BreathFirstSearch(rows, cols,board_1d,event_bus=event_bus)
         execution_time, toggle_combination, _ = bfs.solve()
@@ -71,8 +73,33 @@ def solveMap(rows,cols,board_1d):
         time, toggle_combination, _ = greedy.solve()
     elif(current_index_algorithm == 3):
         aStar = AStar(rows,cols,board_1d,event_bus)
-        execution_time, toggled, _ = aStar.solve()
+        execution_time, toggle_combination, _ = aStar.solve()
+    show_solution = True
+    toggled = toggle_combination
+    return draw_solution_board(board,-300)
+ 
 
+
+def draw_solution_board(board, x_offset):
+    global CELL_SIZE
+    global toggled
+
+    border_width = 2
+    rows, cols = board.shape
+    toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
+    rows, cols = get_board_size()  
+    if (rows, cols) == (2, 3):
+        CELL_SIZE = 130  
+    else:
+        CELL_SIZE = 80   
+    for row in range(rows):
+        for col in range(cols):
+            color = "Yellow" if board[row, col] else "White"
+            l = color
+            color = "Green" if toggledMap[row,col] else l
+            cell_rect = pygame.Rect(col * CELL_SIZE + 400 + x_offset, row * CELL_SIZE + 150, CELL_SIZE, CELL_SIZE)
+            pygame.draw.rect(SCREEN, color, cell_rect)
+            pygame.draw.rect(SCREEN, "Black", cell_rect, border_width)
 
 
 
@@ -95,18 +122,28 @@ def draw_board(board, x_offset):
             pygame.draw.rect(SCREEN, "Black", cell_rect, border_width)
 
 
+
 def toggle_lights(grid, row, col):
-    rows, cols = len(grid), len(grid[0])  # Get the dimensions of the grid
+    global show_solution
+    global toggled
+    # if(show_solution):
+    #     rows, cols = grid.shape 
+    #     toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
+    #     toggledMap[row][col] = False
+    #     toggled = toggledMap.astype(int).flatten().tolist()
+        
+    rows, cols = len(grid), len(grid[0])
     if 0 <= row < rows and 0 <= col < cols:
         grid[row][col] = not grid[row][col]
         if row > 0:
-            grid[row - 1][col] = not grid[row - 1][col]
+            grid[row - 1][col] = not grid[row - 1][col]  # Toggle cell above
         if row < rows - 1:
-            grid[row + 1][col] = not grid[row + 1][col]
+            grid[row + 1][col] = not grid[row + 1][col]  # Toggle cell below
         if col > 0:
-            grid[row][col - 1] = not grid[row][col - 1]
+            grid[row][col - 1] = not grid[row][col - 1]  # Toggle cell to the left
         if col < cols - 1:
-            grid[row][col + 1] = not grid[row][col + 1]
+            grid[row][col + 1] = not grid[row][col + 1]  # Toggle cell to the right
+
 
 
     
@@ -116,10 +153,18 @@ def play() :
 
     rows, cols = get_board_size()  
     board = np.random.randint(2, size=(rows, cols), dtype=bool)
-
-
     board_1d = board.astype(int).flatten().tolist()
-    start_time = None
+
+    # init_field = [
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 1, 0, 0,
+    #     0, 0, 0, 1, 1,
+    #     0, 0, 0, 1, 1
+    # ]
+    
+    # board = np.array(init_field, dtype=bool).reshape(5, 5)
+    # board_1d = (np.array(init_field).reshape(5, 5)).astype(int).flatten().tolist()
 
     while True:
         
@@ -170,7 +215,8 @@ def play() :
         PLAY_SOLVE.changeColor(PLAY_MOUSE_POS)
         PLAY_SOLVE.update(SCREEN)
 
-        draw_board(board, -300)
+        draw_board(board, -300) if show_solution == False else draw_solution_board(board,-300)
+        
         draw_board(board, 400)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -180,25 +226,17 @@ def play() :
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                     main_menu()
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
-                    start_time = time.time()
-                    pygame.display.update()
                     event_bus.subscribe('test', handle_game_event)
-                    solveMap(rows,cols,board_1d)
-
+                    solveMap(rows, cols, board_1d)
                 for row in range(GRID_SIZE):
                     for col in range(GRID_SIZE):
-                        cell_rect = pygame.Rect(col * CELL_SIZE + 400 + 39, row * CELL_SIZE + 150, CELL_SIZE, CELL_SIZE)
+                        x_pos = col * CELL_SIZE + 400 - 300  # Adjust for the left offset
+                        y_pos = row * CELL_SIZE + 150
+                        cell_rect = pygame.Rect(x_pos, y_pos, CELL_SIZE, CELL_SIZE)
                         if cell_rect.collidepoint(PLAY_MOUSE_POS):
                             toggle_lights(board, row, col)
 
-        if check_win(board):
-            print("You won!")
         
-        if start_time is not None:
-            elapsed_time = time.time() - start_time
-            PLAY_TIMER = get_font(20).render(f"Elapsed Time: {elapsed_time:.2f} seconds", True, "Yellow")
-            PLAY_TIMER_RECT = PLAY_TIMER.get_rect(center=(640, 400))
-            SCREEN.blit(PLAY_TIMER, PLAY_TIMER_RECT)
 
         pygame.display.update()
 

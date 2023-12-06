@@ -38,6 +38,7 @@ class AStar:
         while True:
 
             price, idx, current, toggled = heapq.heappop(heap)
+            self.eventBus.publish('test', current)
 
             for cell_index in range(self.cells_count):
                 init_field = toggler.on_toggle(cell_index, current.copy())
@@ -49,12 +50,9 @@ class AStar:
 
                 heapq.heappush(heap, (priority, idx + 1, init_field, init_toggled))
                 m = m + 1
-                self.eventBus.publish('test',init_field)
                 if self.is_solved(init_field):
                     escape = True
                     break
-
-
 
             if escape:
                 break
@@ -68,6 +66,6 @@ class AStar:
         # End measuring time
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"Execution Time:        {execution_time} seconds")
-
+        print(f"Execution Time:     {execution_time} seconds")
+        self.eventBus.clearEvents()
         return execution_time, toggled, None
