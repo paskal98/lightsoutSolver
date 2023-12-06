@@ -145,8 +145,9 @@ def draw_solution_board(board, x_offset):
 
     border_width = 2
     rows, cols = board.shape
-    toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
+    
     rows, cols = get_board_size()
+    toggledMap = np.array(toggled, dtype=bool).reshape(rows, cols)
     if (rows, cols) == (2, 3):
         CELL_SIZE = 130
     else:
@@ -205,7 +206,10 @@ def toggle_lights(grid, row, col):
 def get_map_data():
     global current_index_map_5x5
     global current_index_map_2x3
-
+    global toggled
+    global show_solution
+    toggled = []
+    show_solution = False
     if get_board_size()==(2,3):
         init_field = BOARD_2x3[current_index_map_2x3]
         return np.array(init_field, dtype=bool).reshape(2, 3) , (np.array(init_field).reshape(2, 3)).astype(int).flatten().tolist()
@@ -216,9 +220,7 @@ def get_map_data():
 
 def play():
     pygame.display.set_caption("Lights Out!")
-
     rows, cols = get_board_size()  
-
     board, board_1d = get_map_data()
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
@@ -298,7 +300,11 @@ def options():
     pygame.display.set_caption("Options!")
     global current_index_algorithm
     global current_index_board
+    global toggled
+    global show_solution
     while True:
+        toggled = []
+        show_solution = False
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
@@ -347,10 +353,16 @@ def options():
 
 
 def select_map():
+
     pygame.display.set_caption("Maps!")
     global current_index_map_2x3
     global current_index_map_5x5
+    global toggled
+    global show_solution
+
     while True:
+        toggled = []
+        show_solution = False
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
@@ -359,13 +371,15 @@ def select_map():
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         if get_board_size() == (2, 3):
-            OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
-                                       text_input=BOARD_2x3_NAME[current_index_map_2x3], font=get_font(45),
-                                       base_color="White", hovering_color="Green")
+            map_names = BOARD_2x3_NAME
+            current_index_map = current_index_map_2x3
         else:
-            OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
-                                       text_input=BOARD_5x5_NAME[current_index_map_5x5], font=get_font(45),
-                                       base_color="White", hovering_color="Green")
+            map_names = BOARD_5x5_NAME
+            current_index_map = current_index_map_5x5
+
+        OPTIONS_ALGORITHM = Button(image=None, pos=(640, 260),
+                                   text_input=map_names[current_index_map], font=get_font(45),
+                                   base_color="White", hovering_color="Green")
 
         OPTIONS_ALGORITHM.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_ALGORITHM.update(SCREEN)
@@ -384,7 +398,6 @@ def select_map():
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu()
                 elif OPTIONS_ALGORITHM.checkForInput(OPTIONS_MOUSE_POS):
-
                     if get_board_size() == (2, 3):
                         current_index_map_2x3 = (current_index_map_2x3 + 1) % len(BOARD_2x3_NAME)
                         OPTIONS_ALGORITHM.text_input = BOARD_2x3_NAME[current_index_map_2x3]
@@ -392,8 +405,9 @@ def select_map():
                         current_index_map_5x5 = (current_index_map_5x5 + 1) % len(BOARD_5x5_NAME)
                         OPTIONS_ALGORITHM.text_input = BOARD_5x5_NAME[current_index_map_5x5]
 
-
         pygame.display.update()
+
+
 
 
 def main_menu():
@@ -407,7 +421,7 @@ def main_menu():
         MENU_TEXT = get_font(100).render("Lights Out", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250),
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(450, 250),
                             text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400),
