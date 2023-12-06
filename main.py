@@ -108,6 +108,9 @@ def toggle_lights(grid, row, col):
         if col < cols - 1:
             grid[row][col + 1] = not grid[row][col + 1]
 
+
+    
+
 def play() :
     pygame.display.set_caption("Lights Out!")
 
@@ -116,6 +119,8 @@ def play() :
 
 
     board_1d = board.astype(int).flatten().tolist()
+    start_time = None
+
     while True:
         
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
@@ -124,16 +129,25 @@ def play() :
         PLAY_TEXT = get_font(45).render("LIGHTS OUT", True, "Yellow")
         PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 90))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+    
+        if(current_index_board == 0):
+            PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
+            PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 450))
+            SCREEN.blit(PLAY_MAP, PLAY_MAAP)
 
-        PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
-        PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 450))
-        SCREEN.blit(PLAY_MAP, PLAY_MAAP)
+            PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
+            SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
+        else:
+            PLAY_MAP = get_font(20).render("INITIAL MAP", True, "Yellow")
+            PLAY_MAAP = PLAY_MAP.get_rect(center=(300, 590))
+            SCREEN.blit(PLAY_MAP, PLAY_MAAP)
 
-        PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
-        PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 450))
-        SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
-
-       
+            PLAY_SOLVE = get_font(20).render("SOLVER", True, "Yellow")
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 590))
+            PLAY_SOLVER = PLAY_SOLVE.get_rect(center=(1000, 590))
+            SCREEN.blit(PLAY_SOLVE, PLAY_SOLVER)
 
         if(current_index_board == 0):
             PLAY_BACK = Button(image=None, pos=(640, 599), 
@@ -145,11 +159,12 @@ def play() :
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
 
+        
         if(current_index_board == 0):
             PLAY_SOLVE = Button(image=None, pos=(640, 490), 
                             text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red")
         else:
-           PLAY_SOLVE = Button(image=None, pos=(640, 590), 
+            PLAY_SOLVE = Button(image=None, pos=(640, 590), 
                             text_input="SOLVE", font=get_font(40), base_color="White", hovering_color="Red") 
 
         PLAY_SOLVE.changeColor(PLAY_MOUSE_POS)
@@ -165,6 +180,8 @@ def play() :
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                     main_menu()
                 if PLAY_SOLVE.checkForInput(PLAY_MOUSE_POS):
+                    start_time = time.time()
+                    pygame.display.update()
                     event_bus.subscribe('test', handle_game_event)
                     solveMap(rows,cols,board_1d)
 
@@ -174,8 +191,14 @@ def play() :
                         if cell_rect.collidepoint(PLAY_MOUSE_POS):
                             toggle_lights(board, row, col)
 
-                if check_win(board):
-                    print("You won!")
+        if check_win(board):
+            print("You won!")
+        
+        if start_time is not None:
+            elapsed_time = time.time() - start_time
+            PLAY_TIMER = get_font(20).render(f"Elapsed Time: {elapsed_time:.2f} seconds", True, "Yellow")
+            PLAY_TIMER_RECT = PLAY_TIMER.get_rect(center=(640, 400))
+            SCREEN.blit(PLAY_TIMER, PLAY_TIMER_RECT)
 
         pygame.display.update()
 
